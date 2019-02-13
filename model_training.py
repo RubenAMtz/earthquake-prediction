@@ -72,10 +72,10 @@ Step 4:
 * Submit file
 
 """
-import gc
+#import gc
 import os
-import time
-import glob
+#import time
+#import glob
 import logging
 import datetime
 import warnings
@@ -85,15 +85,15 @@ import pandas as pd
 from tqdm import tqdm
 from scipy import stats
 import matplotlib.pyplot as plt
-from sklearn.svm import NuSVR, SVR
-from sklearn.kernel_ridge import KernelRidge
+#from sklearn.svm import NuSVR, SVR
+#from sklearn.kernel_ridge import KernelRidge
 from sklearn import metrics
-from sklearn.preprocessing import LabelEncoder
+#from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_absolute_error
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import KFold,StratifiedKFold, RepeatedKFold, cross_val_score
-from multiprocessing import Pool
+from sklearn.model_selection import cross_val_score
+#from multiprocessing import Pool
 warnings.filterwarnings("ignore")
 from sklearn.cluster import KMeans
 from sklearn.model_selection import train_test_split
@@ -361,25 +361,3 @@ if __name__ == "__main__":
     submission = pd.read_csv('sample_submission.csv')
     submission['time_to_failure'] = y_predict
     submission.to_csv('final_submission.csv', index=False)
-
-
-
-
-
-
-
-
-    # -------------------------------
-
-    # print(dir(X_ts))
-    
-    # segment = pd.read_csv(train_segments_list[0])
-    # acoustic = segment['acoustic_data'].values
-    # index = list(range(len(acoustic)))
-    # x = [[i, element] for i, element in enumerate(acoustic)]
-    # # print(x)
-    # #plt.scatter(index, acoustic)
-    # #plt.show()
-    # kmeans = KMeans(n_clusters=40, random_state=0).fit(x)
-    # plt.scatter(index, acoustic, c=kmeans.labels_, s=1)
-    # plt.show()
