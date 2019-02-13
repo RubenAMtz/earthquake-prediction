@@ -1,77 +1,3 @@
-"""
-* Explore data (600 M)
-    - Sample
-    - Visualize
-    - Size
-    - Summary
-
-* Data structure:
-    Data:
-    - columns = 2
-    - column names: audio, time_to_failure
-
-    - input: audio (int)
-    - output: time_to_failure (float)
-
-    Train data:
-    - format: .csv
-    - 600M instances in training set
-
-    Test data:
-        - format: .csv
-        - Test segments = 2626 (files)
-        - 150k instances in every test set
-
------------------------------------------------------
-
-Step 1:
-
-* Split inputs from outputs:
-
-    This means we have to isolate the *audio* column from the *time_to_failure* column
-
-Step 2:
-
-* Split the training set in segments (with as many instances as the test sets)
-    - 150K instances in test sets, so... 600M / 150K ~ 4K segments out of the training set
-    - Create as many training segments needed and store in files
-
-Step 3:
-
-* Feature engineering (create features from inputs) to TRAINING data and TEST data
-    - Apply any method to generate features for every TRAINING segment
-
-    As our model is trained based on the newly created features, we need to create the same features for our test set, which is the
-    data that will be used to make predictions:
-
-    - Apply same methods to generate same features for every TEST segment
-    - Scale the data (train and test)
-    - Save files in folders train_features and test_features
-
-Step 4:
-
-* Configure the model (ensemble)
-
-* As we only have train file (inputs-output relationship), we need to split it, to create a Validation set.
-    - Split so that we have 66% train vs 33% validation
-    {
-    Train:
-        X = inputs, Y= output
-    Test (X for sample sumbission):
-        X = inputs, Y= NA
-    Sample submission:
-        Y = ? to be compared vs ground truth
-    }
-
-* Define evaluation metrics = 'mean average error'
-
-* Define feature importance
-
-* Train model and evaluate with k-fold cross-validation
-
-* Submit file
-
-"""
 import os
 import glob
 import logging
@@ -112,14 +38,10 @@ def create_train_XY(X=None, y=None):
     if y is not None:
         y.to_csv(BASE_DIR + 'train_y.csv')
         
-    
-
-
 def create_segments():
     for idx, chunk in enumerate(pd.read_csv(BASE_DIR + 'train/train.csv', chunksize=150000)):
         chunk_name = "train_segment_{:04d}.csv".format(idx)
         chunk.to_csv(BASE_DIR + 'train_segments/'+ chunk_name)
-
 
 def plot_sample_file(path=BASE_DIR, filename=None):
     segment = pd.read_csv(path + filename)
@@ -138,7 +60,6 @@ def plot_sample_file(path=BASE_DIR, filename=None):
     plt.legend(['time to failure'], loc=(0.01, 0.9))
     plt.grid(True)
     plt.show()
-
 
 def create_test_X(test_X):
     for id in tqdm(test_X.index):
@@ -265,12 +186,8 @@ if __name__ == "__main__":
     if not os.path.isfile(BASE_DIR + 'train_y.csv'):
         train_y = pd.DataFrame(index=range(len(train_segments_list)), dtype=np.float64, columns=['time_to_failure'])
         create_train_XY(y=train_y)
-
-    # just once
     
     scaled_train_X = scale(train_X)
-    #scaled_train_Y = scale(train_y)
-    #print(scaled_train_Y.head(10))
 
     if not os.path.isfile(BASE_DIR + 'test_X.csv'):
         submission = pd.read_csv(BASE_DIR + 'sample_submission.csv', index_col='seg_id')
@@ -283,13 +200,6 @@ if __name__ == "__main__":
     scaled_test_X = scale(test_X)
 
     # FEATURE SELECTION
-        # Using wrappers
-        # Configure a randomeforest ensemble classifier:
-
-        # algoritmo de busqueda
-            # generar combinaciones de variables
-                # 100
-        # algoritmo de classificacion/regression
 
     if not os.path.isfile(BASE_DIR + 'rfr_model.joblib'):
         feat_select_model = ensemble.RandomForestRegressor(criterion="mae", max_depth=50, min_samples_split=50, n_estimators = 500, verbose=1000, n_jobs=5)
@@ -304,11 +214,11 @@ if __name__ == "__main__":
     # FEATURES SELECTED:
     new_scaled_X = model.transform(scaled_train_X)
     new_scaled_X_test = model.transform(scaled_test_X)
-    print(new_scaled_X.shape)
-    print(new_scaled_X_test.shape)
+    #print(new_scaled_X.shape)
+    #print(new_scaled_X_test.shape)
     # print(model.get_support(indices=True))
     # print(train_X.iloc[0,model.get_support(indices=True)])
-    print(train_X.columns[model.get_support(indices=True)])
+    #print(train_X.columns[model.get_support(indices=True)])
     
     ## CONFIGURE OUR MODEL
     # Apparently feature selection did not good at all. We will now try with all the features
