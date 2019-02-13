@@ -72,23 +72,17 @@ Step 4:
 * Submit file
 
 """
-#import gc
 import os
-#import time
-#import glob
+import glob
 import logging
 import datetime
 import warnings
 import numpy as np
 import pandas as pd
-# import xgboost as xgb
 from tqdm import tqdm
 from scipy import stats
 import matplotlib.pyplot as plt
-#from sklearn.svm import NuSVR, SVR
-#from sklearn.kernel_ridge import KernelRidge
 from sklearn import metrics
-#from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_absolute_error
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
