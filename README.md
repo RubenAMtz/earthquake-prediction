@@ -45,8 +45,8 @@ Step 1:
 Step 2:
 
 - Split the training set in segments (with as many instances as the test sets)
-    -+ 150K instances in test sets, so... 600M / 150K ~ 4K segments out of the training set
-    -+ Create as many training segments needed and store in files
+- 150K instances in test sets, so... 600M / 150K ~ 4K segments out of the training set
+- Create as many training segments needed and store in files
 
 Step 3:
 
@@ -57,6 +57,8 @@ Step 3:
 
 
 - Apply x methods to generate features for every TRAINING segment
+
+    Number of features created: 71
 
 As our model is trained based on the newly created features, we need to create the same features for our test set, which is the
 data that will be used to make predictions:
@@ -81,4 +83,12 @@ Step 4:
 - Evaluate model with 5-fold cross-validation
 - Train and predict
 - Submit file
+
+***
+
+# TODO:
+
+- Extract more audio features and retrain.
+- Apply GridSearch for hyper parameter optimization.
+
 
