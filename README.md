@@ -11,6 +11,7 @@ Team name: ***RubenAMtz***
 | Commit       | Score       | Date     |
 | ------------ | ----------- | -------- |
 | First        | 1.808       | 13/02/18 |
+| Second       | 1.724       | 28/02/18 |
 
 
 ![Earthquake](https://cdn.newsapi.com.au/image/v1/36aab19faa109c662cc4361696831a64?width=1024 "Earthquake detection")
@@ -90,5 +91,12 @@ Step 4:
 
 - Extract more audio features and retrain.
 - Apply GridSearch for hyper parameter optimization.
+
+# Updates
+
+- More features were added
+- GridSearch improved our model in ~0.1%
+- A deep dense model was implemented
+- Dense model seems to fit better the training data but overfits.
 
 
