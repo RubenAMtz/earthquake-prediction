@@ -1,5 +1,5 @@
 **/test
 **/train
 **/train_segments
-*.csv
+**/*.csv
 rfr_model - Copy.joblib
