@@ -33,7 +33,7 @@ def create_train_XY(X=None, y=None):
         if X is not None :
             create_features(id, segment, X)
         if y is not None:
-            y.loc[id, 'time_to_failure'] = segment['time_to_failure'].values.mean()
+            y.loc[id, 'time_to_failure'] = segment['time_to_failure'].values.max()
     if X is not None:
         X.to_csv(BASE_DIR + 'train_X.csv')
     if y is not None:
@@ -144,15 +144,15 @@ def create_features(id, segment, train_X):
     train_X.loc[id, 'MFCC_max'] = librosa.feature.mfcc(np.float64(x_ts)).max()
     train_X.loc[id, 'MFCC_min'] = librosa.feature.mfcc(np.float64(x_ts)).min()
 
-    train_X.loc[id, 'MFCC_mean_last15000'] = librosa.feature.mfcc(np.float64(x_ts))[-15000:].mean()
-    train_X.loc[id, 'MFCC_std_last15000'] = librosa.feature.mfcc(np.float64(x_ts))[-15000:].std()
-    train_X.loc[id, 'MFCC_max_last15000'] = librosa.feature.mfcc(np.float64(x_ts))[-15000:].max()
-    train_X.loc[id, 'MFCC_min_last15000'] = librosa.feature.mfcc(np.float64(x_ts))[-15000:].min()
+    train_X.loc[id, 'MFCC_mean_last15000'] = librosa.feature.mfcc(np.float64(x_ts), sr=4000000)[-15000:].mean()
+    train_X.loc[id, 'MFCC_std_last15000'] = librosa.feature.mfcc(np.float64(x_ts), sr=4000000)[-15000:].std()
+    train_X.loc[id, 'MFCC_max_last15000'] = librosa.feature.mfcc(np.float64(x_ts), sr=4000000)[-15000:].max()
+    train_X.loc[id, 'MFCC_min_last15000'] = librosa.feature.mfcc(np.float64(x_ts), sr=4000000)[-15000:].min()
 
-    train_X.loc[id, 'MFCC_mean_last5000'] = librosa.feature.mfcc(np.float64(x_ts))[-5000:].mean()
-    train_X.loc[id, 'MFCC_std_last5000'] = librosa.feature.mfcc(np.float64(x_ts))[-5000:].std()
-    train_X.loc[id, 'MFCC_max_last5000'] = librosa.feature.mfcc(np.float64(x_ts))[-5000:].max()
-    train_X.loc[id, 'MFCC_min_last5000'] = librosa.feature.mfcc(np.float64(x_ts))[-5000:].min()
+    train_X.loc[id, 'MFCC_mean_last5000'] = librosa.feature.mfcc(np.float64(x_ts), sr=4000000)[-5000:].mean()
+    train_X.loc[id, 'MFCC_std_last5000'] = librosa.feature.mfcc(np.float64(x_ts), sr=4000000)[-5000:].std()
+    train_X.loc[id, 'MFCC_max_last5000'] = librosa.feature.mfcc(np.float64(x_ts), sr=4000000)[-5000:].max()
+    train_X.loc[id, 'MFCC_min_last5000'] = librosa.feature.mfcc(np.float64(x_ts), sr=4000000)[-5000:].min()
 
     # count disturbances in the time domain:
     train_X.loc[id, 'local_disturbances'] = count_disturbances(arr=x_ts)

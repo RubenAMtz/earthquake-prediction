@@ -7,3 +7,4 @@ rnn_training.py
 example.py
 notebook.py
 **/__pycache__/
+**/img_segments/
