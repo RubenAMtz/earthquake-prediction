@@ -10,7 +10,11 @@ Team name: ***RubenAMtz***
 
 | Commit       | Score       | Date     |
 | ------------ | ----------- | -------- |
-| First        | 1.808       | 13/02/18 |
+| First        | 1.808       | 13/02/19 |
+| Second       | 1.724       | 28/02/19 |
+| Third        | 1.765       | 01/03/19 |
+| Fourth       | 1.787       | 01/03/19 |
+| Fifth        | 1.665       | 02/03/19 |
 
 
 ![Earthquake](https://cdn.newsapi.com.au/image/v1/36aab19faa109c662cc4361696831a64?width=1024 "Earthquake detection")
@@ -86,9 +90,24 @@ Step 4:
 
 ***
 
-# TODO:
+# Updates 02/03/19
 
-- Extract more audio features and retrain.
-- Apply GridSearch for hyper parameter optimization.
+- Features added:
+
+    - Peak counting based on mean and std from local files (and statistics)
+    - MFCC for last and first samples per local file (and statistics)
+    - Removed some features
+- Optimized GradientBoostingRegressor by GridSearchCV:
+
+    - Smaller learning rate
+    - Increased the number of estimators
+
+# Updates 01/03/19
+
+- More features were added
+- GridSearch improved our model in ~0.1%
+- A deep dense model was implemented
+- Dense model seems to fit better the training data but overfits.
+
 
 
