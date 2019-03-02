@@ -265,9 +265,7 @@ if __name__ == "__main__":
     if not os.path.isfile('deep_model.h5'):
         # Set up model
         model = Sequential()
-        model.add(Dense(X_train_.shape[1], input_shape=(X_train_.shape[1],), activation='sigmoid'))
-        model.add(Dropout(0.5))
-        model.add(Dense(80, activation='sigmoid'))
+        model.add(Dense(80, input_shape=(X_train_.shape[1],), activation='sigmoid'))
         model.add(Dropout(0.5))
         model.add(Dense(60,  activation='sigmoid'))
         model.add(Dropout(0.5))

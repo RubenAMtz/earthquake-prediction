@@ -20,6 +20,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_selection import SelectFromModel
 from sklearn import ensemble
 from joblib import load, dump
+import librosa
 
 # train_file = pd.read_csv('D:/kaggle/LANL_Earthquake prediction/train/train.csv')
 # sample = train_file.sample(n=int(len(train)*0.1), random_state=42)
@@ -83,6 +84,18 @@ def add_trend_feature(arr, abs_values=False):
     lr.fit(idx.reshape(-1, 1), arr)
     return lr.coef_[0]
 
+def count_disturbances(arr):
+    std = np.std(arr)
+    avg = np.mean(arr)
+    upper_limit = avg + 3*std
+    lower_limit = avg - 3*std
+    count = 0
+
+    for i in arr:
+        if i > upper_limit or i < lower_limit:
+            count += 1
+    return count
+
 def create_features(id, segment, train_X):
     # pd.values returns a numpy representation of the data
     # pd.Series creates a one-dimensional ndarray with axis labels (including time series)
@@ -105,6 +118,7 @@ def create_features(id, segment, train_X):
     train_X.loc[id, 'Istd'] = imagFFT.std()
     train_X.loc[id, 'Imax'] = imagFFT.max()
     train_X.loc[id, 'Imin'] = imagFFT.min()
+
     train_X.loc[id, 'Rmean_last_5000'] = realFFT[-5000:].mean()
     train_X.loc[id, 'Rstd__last_5000'] = realFFT[-5000:].std()
     train_X.loc[id, 'Rmax_last_5000'] = realFFT[-5000:].max()
@@ -113,6 +127,35 @@ def create_features(id, segment, train_X):
     train_X.loc[id, 'Rstd_last_15000'] = realFFT[-15000:].std()
     train_X.loc[id, 'Rmax_last_15000'] = realFFT[-15000:].max()
     train_X.loc[id, 'Rmin_last_15000'] = realFFT[-15000:].min()
+
+    # fft statistics "first"
+    train_X.loc[id, 'Rmean_first_5000'] = realFFT[:5000].mean()
+    train_X.loc[id, 'Rstd__first_5000'] = realFFT[:5000].std()
+    train_X.loc[id, 'Rmax_first_5000'] = realFFT[:5000].max()
+    train_X.loc[id, 'Rmin_first_5000'] = realFFT[:5000].min()
+    train_X.loc[id, 'Rmean_first_15000'] = realFFT[:15000].mean()
+    train_X.loc[id, 'Rstd_first_15000'] = realFFT[:15000].std()
+    train_X.loc[id, 'Rmax_first_15000'] = realFFT[:15000].max()
+    train_X.loc[id, 'Rmin_first_15000'] = realFFT[:15000].min()
+
+    # librosa
+    train_X.loc[id, 'MFCC_mean'] = librosa.feature.mfcc(np.float64(x_ts)).mean()
+    train_X.loc[id, 'MFCC_std'] = librosa.feature.mfcc(np.float64(x_ts)).std()
+    train_X.loc[id, 'MFCC_max'] = librosa.feature.mfcc(np.float64(x_ts)).max()
+    train_X.loc[id, 'MFCC_min'] = librosa.feature.mfcc(np.float64(x_ts)).min()
+
+    train_X.loc[id, 'MFCC_mean_last15000'] = librosa.feature.mfcc(np.float64(x_ts))[-15000:].mean()
+    train_X.loc[id, 'MFCC_std_last15000'] = librosa.feature.mfcc(np.float64(x_ts))[-15000:].std()
+    train_X.loc[id, 'MFCC_max_last15000'] = librosa.feature.mfcc(np.float64(x_ts))[-15000:].max()
+    train_X.loc[id, 'MFCC_min_last15000'] = librosa.feature.mfcc(np.float64(x_ts))[-15000:].min()
+
+    train_X.loc[id, 'MFCC_mean_last5000'] = librosa.feature.mfcc(np.float64(x_ts))[-5000:].mean()
+    train_X.loc[id, 'MFCC_std_last5000'] = librosa.feature.mfcc(np.float64(x_ts))[-5000:].std()
+    train_X.loc[id, 'MFCC_max_last5000'] = librosa.feature.mfcc(np.float64(x_ts))[-5000:].max()
+    train_X.loc[id, 'MFCC_min_last5000'] = librosa.feature.mfcc(np.float64(x_ts))[-5000:].min()
+
+    # count disturbances in the time domain:
+    train_X.loc[id, 'local_disturbances'] = count_disturbances(arr=x_ts)
 
     train_X.loc[id, 'mean_change_abs'] = np.mean(np.diff(x_ts))
     train_X.loc[id, 'mean_change_rate'] = np.mean(np.nonzero((np.diff(x_ts) / x_ts[:-1]))[0])
@@ -145,11 +188,11 @@ def create_features(id, segment, train_X):
     train_X.loc[id, 'sum'] = x_ts.sum()
     
     # Mean over indices were change rate is different than zero (Change Rate, averaged (Difference over actual quantity))
-    train_X.loc[id, 'mean_change_rate_first_50000'] = np.mean(np.nonzero((np.diff(x_ts[:50000]) / x_ts[:50000][:-1]))[0])
-    train_X.loc[id, 'mean_change_rate_last_50000'] = np.mean(np.nonzero((np.diff(x_ts[-50000:]) / x_ts[-50000:][:-1]))[0])
-    train_X.loc[id, 'mean_change_rate_first_10000'] = np.mean(np.nonzero((np.diff(x_ts[:10000]) / x_ts[:10000][:-1]))[0])
-    train_X.loc[id, 'mean_change_rate_last_10000'] = np.mean(np.nonzero((np.diff(x_ts[-10000:]) / x_ts[-10000:][:-1]))[0])
-    
+    # train_X.loc[id, 'mean_change_rate_first_50000'] = np.mean((np.diff(x_ts[:50000]) / x_ts[:50000][:-1])[np.nonzero((np.diff(x_ts[:50000]) / x_ts[:50000][:-1]))[0]])
+    # train_X.loc[id, 'mean_change_rate_last_50000'] = np.mean((np.diff(x_ts[-50000:]) / x_ts[-50000:][:-1])[np.nonzero((np.diff(x_ts[-50000:]) / x_ts[-50000:][:-1]))[0]])
+    # train_X.loc[id, 'mean_change_rate_first_10000'] = np.mean((np.diff(x_ts[:10000]) / x_ts[:10000][:-1])[np.nonzero((np.diff(x_ts[:10000]) / x_ts[:10000][:-1]))[0]])
+    # train_X.loc[id, 'mean_change_rate_last_10000'] = np.mean((np.diff(x_ts[-10000:]) / x_ts[-10000:][:-1])[np.nonzero((np.diff(x_ts[-10000:]) / x_ts[-10000:][:-1]))[0]])
+
     train_X.loc[id, 'q95'] = np.quantile(x_ts, 0.95)
     train_X.loc[id, 'q99'] = np.quantile(x_ts, 0.99)
     train_X.loc[id, 'q05'] = np.quantile(x_ts, 0.05)
@@ -251,33 +294,34 @@ if __name__ == "__main__":
     ## CONFIGURE OUR MODEL
     # Apparently feature selection did not good at all. We will now try with all the features
 
-    X_train_, X_val, y_train_, y_val = train_test_split(scaled_train_X, train_y, test_size=0.33, random_state=42)
+    X_train_, X_val, y_train_, y_val = train_test_split(scaled_train_X, train_y, test_size=0.10, random_state=42)
 
     if not os.path.isfile(BASE_DIR + 'gbregressor_model_optimized.joblib'):
-        gbregressor = ensemble.GradientBoostingRegressor(loss='ls', n_estimators=1000, criterion="mae", learning_rate=0.1, n_iter_no_change= 50)
-        #scores = cross_val_score(gbregressor, X_train_, y_train_, cv=5, n_jobs = 5, verbose=1000, scoring = 'neg_mean_absolute_error')
-        #print(scores)
+        gbregressor = ensemble.GradientBoostingRegressor(loss='ls', n_estimators=1300, criterion="mae", 
+                                                        learning_rate=0.005, n_iter_no_change= 50,
+                                                        subsample=0.5, max_depth=4)
         
-        #gbregressor.fit(X_train_,y_train_)
-        
+        #########################################
+        # Best params:  {'learning_rate': 0.005, 'max_depth': 4, 'n_estimators': 1300, 'subsample': 0.5}
+        #########################################
         gbparams = [
             {
-                "n_estimators":[500,800,1000],
-                "learning_rate":[0.1, 0.05],
-                 "subsample":[0.5, 1],
-                 "max_depth": [3, 4, 5, 6],
+                'loss':['ls','lad','huber'],
+                "n_estimators":[1300, 2000],
+                #"learning_rate":[0.05, 0.01, 0.005],
+                 #"subsample":[0.5, 1],
+                 #"max_depth": [3, 4, 5, 6],
             }
                     ]
 
         gbregressor_optimized = GridSearchCV(gbregressor, gbparams, cv = 2, n_jobs = 5)
-
         gbregressor_optimized.fit(X_train_, y_train_)
+        print("Best params: ", gbregressor_optimized.best_params_)
 
         dump(gbregressor_optimized, 'gbregressor_model_optimized.joblib')
     else:
         gbregressor_optimized = load('gbregressor_model_optimized.joblib')
 
-    print("Best params: ", gbregressor_optimized.best_params_)
 
     # PREDICTION USING VALIDATION DATA
     #y_predict = gbregressor.predict(X_val)

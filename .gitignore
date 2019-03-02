@@ -3,3 +3,7 @@
 **/train_segments
 **/*.csv
 rfr_model - Copy.joblib
+rnn_training.py
+example.py
+notebook.py
+**/__pycache__/
