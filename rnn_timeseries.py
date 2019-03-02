@@ -3,14 +3,22 @@ import numpy as np
 import pandas as pd
 import glob
 import matplotlib.pyplot as plt
-
+import random
+import tqdm
 BASE_DIR = 'D:/kaggle/LANL_Earthquake prediction/'
 train_segments_list = glob.glob(BASE_DIR + 'train_segments/*.csv')
 
-segment = pd.read_csv(train_segments_list[0])
-
+sample_size = 500
+sorted_sample = [
+    train_segments_list[i] for i in sorted(random.sample(range(len(train_segments_list)), sample_size))
+]
+segments = pd.DataFrame(columns=['acoustic_data','time_to_failure'])
+for file in tqdm.tqdm(sorted_sample):
+    segment = pd.read_csv(file, index_col=0)
+    segments = segments.append(segment, ignore_index=True)
 audio = segment['acoustic_data'].values
 ttf = segment['time_to_failure'].values
+
 #print(audio.shape)
 #prepare the data so that each 20 instances are listed together:
 def shape_data(data = None):
