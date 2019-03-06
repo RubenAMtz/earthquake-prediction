@@ -8,7 +8,7 @@ Can you predict upcoming laboratory earthquakes?
 
 Team name: ***RubenAMtz***
 
-| Commit       | Score       | Date     |
+| Commit       | Score (mae) | Date     |
 | ------------ | ----------- | -------- |
 | First        | 1.808       | 13/02/19 |
 | Second       | 1.724       | 28/02/19 |
@@ -62,7 +62,7 @@ Step 3:
 
 - Apply x methods to generate features for every TRAINING segment
 
-    Number of features created: 71
+    Number of features created: ~~71~~ 131
 
 As our model is trained based on the newly created features, we need to create the same features for our test set, which is the
 data that will be used to make predictions:
@@ -89,6 +89,9 @@ Step 4:
 - Submit file
 
 ***
+# Updates 06/03/19
+
+    - CNN will be trained using STFT plots from each training segment.
 
 # Updates 02/03/19
 
